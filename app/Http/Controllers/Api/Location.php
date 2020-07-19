@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use \GuzzleHttp\Client as HttpClient;
+use App\Helpers\Http;
 
 class Location extends Controller
 {
@@ -13,25 +13,25 @@ class Location extends Controller
     
     public function search(Request $request)
     {
+        if (!$request->q) {
+            return [
+                'message' => 'Invalid request query',
+                'error' => true
+            ];
+        }
+
         // foursquare api venue search request
-        $client = new HttpClient();
-        $response = $client->request('GET', self::FOURSQUARE_VENUE_SEARCH, [
-            'query' => [
-                'near' => $request->near,
-                'query' => $request->q,
-                'limit' => $request->limit ? $request->limit : self::RANGE,
-                'client_id' => env('FOURSQUARE_CLIENT_ID'),
-                'client_secret' => env('FOURSQUARE_CLIENT_SECRET'),
-                'v' => env('FOURSQUARE_VERSION_DATE')
-            ]
+        $location = Http::get(self::FOURSQUARE_VENUE_SEARCH, [
+            'query' => $request->q,
+            'near' => $request->near ? $request->near : 'Tokyo,JP',
+            'limit' => $request->limit ? $request->limit : self::RANGE,
+            'client_id' => env('FOURSQUARE_CLIENT_ID'),
+            'client_secret' => env('FOURSQUARE_CLIENT_SECRET'),
+            'v' => env('FOURSQUARE_VERSION_DATE')
         ]);
 
-        // parse response
-        $statusCode = $response->getStatusCode();
-        $body = json_decode($response->getBody());
-
         // parse response body
-        $result = $body->response->venues;
+        $result = $location->response->venues;
 
         // response
         return [

@@ -24,3 +24,5 @@ Route::get('/', function () {
 });
 
 Route::get('/location/search', 'Api\\Location@search');
+Route::get('/weather/forecast', 'Api\\Weather@forecast');
+Route::get('/weather/current', 'Api\\Weather@current');
