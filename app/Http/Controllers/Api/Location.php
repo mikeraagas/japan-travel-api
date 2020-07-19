@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use \GuzzleHttp\Client as HttpClient;
-use App\Models\Item as ItemModel;
 
 class Location extends Controller
 {
     const FOURSQUARE_VENUE_SEARCH = 'https://api.foursquare.com/v2/venues/search';
-    const RANGE = 10;
+    const RANGE = 5;
     
     public function search(Request $request)
     {
@@ -38,7 +37,7 @@ class Location extends Controller
         return [
             'message' => 'Success',
             'error' => false,
-            'data'  => $result
+            'result' => $result
         ];
     }
 }
